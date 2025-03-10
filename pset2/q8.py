@@ -18,15 +18,18 @@ total_var = (S_diag**2).sum()/(n-1)
 
 k = 0
 tot_k_var = 0
-while k < 0 or tot_k_var/(n-1) < 0.99 * total_var:
-    sigma = S_diag[k]**2
-    tot_k_var += sigma
+while tot_k_var < 0.99 * total_var:
+    sigma = S_diag[k]
+    tot_k_var += sigma**2/(n-1)
     k += 1
 
-#print(k)
+print(k)
 
 B = U.T[:k, :]@A_0
 
-plt.plot(B[0, np.where(train_labels.T==-1)[1]], B[1, np.where(train_labels.T==-1)[1]], 'C0o')
-plt.plot(B[0, np.where(train_labels.T==1)[1]], B[1, np.where(train_labels.T==1)[1]], 'C1o')
+plt.title('GISETTE training data projected onto two largest PCs')
+plt.plot(B[0, np.where(train_labels.T==-1)[1]], B[1, np.where(train_labels.T==-1)[1]], 'C0o', label = '-1')
+plt.plot(B[0, np.where(train_labels.T==1)[1]], B[1, np.where(train_labels.T==1)[1]], 'C1o', label = '1')
+plt.legend()
+plt.savefig('pset2/output/q8.png')
 plt.show()
