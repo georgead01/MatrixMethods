@@ -1,4 +1,45 @@
 import numpy as np
+import matplotlib.pyplot as plt
+
+### pset1 q7 ###
+
+def linear_solver(U, b):
+
+    '''
+    a function that solves for x in Ux = b
+
+    attributes:
+
+    - U: n x n numpy array representing an upper triangular matrix
+    - b: n x 1 numpy array representing a column vector
+
+    returns:
+
+    - x: n x 1 numpy array representing the solution for Ux = b
+    '''
+    
+    n, m = U.shape
+    assert n == m, f'U ({n} x {m}) not a square matrix'
+    
+    n_b, m_b = b.shape
+    assert m_b == 1, f'b ({n_b} x {m_b}) not a column vector'
+    assert n_b == n, f'column vector b ({n_b} x 1) must be of length {n}'
+
+    epsilon = 10**-6
+
+    for i in range(n):
+        for j in range(i):
+            assert U[i, j] < epsilon, 'U must be upper triangular'
+
+    x = np.zeros((n, 1))
+
+    for i in range(n-1, -1, -1):
+
+        x[i] = (b[i] - U[i, :] @ x)/U[i, i]
+
+    return x
+
+### pset1 q9 ###
 
 def householder_transform(X, u):
     '''
@@ -80,11 +121,26 @@ def QR_Householder(A):
 
     return Q[:, :n], R[:n, :]
 
+### pset2 q9 ###
 
-if __name__ == '__main__':
-    A = np.random.random((4, 3))*10
-    Q, R = QR_Householder(A)
+t = np.arange(-2, 3)
 
-    print(f'A: {A}')
-    print(f'Q: {Q}\nR: {R}')
-    print(f'QR: {Q @ R}')
+A = np.zeros((len(t), 3))
+A[:, 0] = 1
+A[:, 1] = t
+A[:, 2] = t**2
+
+b = np.array([[1.9], [0.2], [-0.05], [1.9], [6.15]])
+
+Q, R = QR_Householder(A)
+x = linear_solver(R, Q.T@b).squeeze()
+
+print(x)
+
+plt.title('data vs. least squared best quadratic fit')
+plt.plot(t, b.squeeze(), 'ro', label = 'data')
+t_cont = np.linspace(-2, 3, 100)
+plt.plot(t_cont, x[0]+x[1]*t_cont+x[2]*t_cont**2, '--', label = f'{x[0]:.3f}+{x[1]:.3f}t+{x[2]:.3f}t^2')
+plt.legend()
+plt.savefig('pset2/output/q9.png')
+plt.show()
