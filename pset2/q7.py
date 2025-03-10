@@ -42,6 +42,7 @@ def compress_images(img, k_vals):
 file_path = 'pset2/data/mit.jpg'
 img = plt.imread(file_path).mean(axis = 2) # take the mean along axis = 2 to get greyscale image
 
+# make sure k_vals is sorted for correct labeling
 k_vals = [10, 50, 100]
 images = compress_images(img, k_vals)
 
