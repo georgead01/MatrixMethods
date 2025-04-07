@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 
 def steepest_descent(A, b, x_0, k_max, epsilon):
