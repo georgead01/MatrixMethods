@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def steepest_descent(A, b, x_0, k_max, epsilon):
+def steepest_descent(A, b, x_0, k_max, epsilon, return_k = False):
     '''
     Finds the solution to Ax = b using steepest descent method.
 
@@ -32,6 +32,8 @@ def steepest_descent(A, b, x_0, k_max, epsilon):
 
         k += 1
 
+    if return_k:
+        return x, k
     return x
 
 def LS_normal_equ(A, b, x_0, max_k, epsilon):
@@ -51,28 +53,30 @@ def LS_normal_equ(A, b, x_0, max_k, epsilon):
 
     return steepest_descent(A.T @ A, A.T @ b, x_0, max_k, epsilon)
 
-t = np.arange(-2, 3)
+if __name__ == '__main__':
 
-A = np.zeros((len(t), 3))
-A[:, 0] = 1
-A[:, 1] = t
-A[:, 2] = t**2
+    t = np.arange(-2, 3)
 
-b = np.array([[1.9], [0.2], [-0.05], [1.9], [6.15]])
+    A = np.zeros((len(t), 3))
+    A[:, 0] = 1
+    A[:, 1] = t
+    A[:, 2] = t**2
 
-x_0 = np.zeros((3, 1))
+    b = np.array([[1.9], [0.2], [-0.05], [1.9], [6.15]])
 
-k_max = 10 ** 4
-epsilon = 10 ** -6
+    x_0 = np.zeros((3, 1))
 
-x = LS_normal_equ(A, b, x_0, k_max, epsilon).squeeze()
+    k_max = 10 ** 4
+    epsilon = 10 ** -6
 
-print(x)
+    x = LS_normal_equ(A, b, x_0, k_max, epsilon).squeeze()
 
-plt.title('Data vs. LS Normal Equation Solution (Steepest Descent)')
-plt.plot(t, b.squeeze(), 'ro', label = 'data')
-t_cont = np.linspace(-2, 3, 100)
-plt.plot(t_cont, x[0]+x[1]*t_cont+x[2]*t_cont**2, '--', label = f'{x[0]:.3f}+{x[1]:.3f}t+{x[2]:.3f}t^2')
-plt.legend()
-plt.savefig('pset3/figs/q7.png')
-plt.show()
+    print(x)
+
+    plt.title('Data vs. LS Normal Equation Solution (Steepest Descent)')
+    plt.plot(t, b.squeeze(), 'ro', label = 'data')
+    t_cont = np.linspace(-2, 3, 100)
+    plt.plot(t_cont, x[0]+x[1]*t_cont+x[2]*t_cont**2, '--', label = f'{x[0]:.3f}+{x[1]:.3f}t+{x[2]:.3f}t^2')
+    plt.legend()
+    plt.savefig('pset3/figs/q7.png')
+    plt.show()

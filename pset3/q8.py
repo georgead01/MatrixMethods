@@ -1,6 +1,6 @@
 import numpy as np
 
-def conjugate_gradient(A, b, x_0, k_max, epsilon):
+def conjugate_gradient(A, b, x_0, k_max, epsilon, return_k = False):
     '''
     Finds the solution to Ax = b using conjugate gradient method.
 
@@ -35,19 +35,24 @@ def conjugate_gradient(A, b, x_0, k_max, epsilon):
 
         k += 1
 
+    if return_k:
+        return x, k
+
     return x
 
-A = np.array([[3, 1, 1],
-              [1, 2, 0],
-              [1, 0, 3]])
+if __name__ == '__main__':
 
-b = np.array([[5],
-              [3],
-              [4]])
+    A = np.array([[3, 1, 1],
+                [1, 2, 0],
+                [1, 0, 3]])
 
-x_0 = np.zeros((3, 1))
+    b = np.array([[5],
+                [3],
+                [4]])
 
-k_max = 10 ** 4
-epsilon = 10 ** -6
+    x_0 = np.zeros((3, 1))
 
-print(conjugate_gradient(A, b, x_0, k_max, epsilon))
+    k_max = 10 ** 4
+    epsilon = 10 ** -6
+
+    print(conjugate_gradient(A, b, x_0, k_max, epsilon))
