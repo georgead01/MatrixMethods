@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 
 n = 10000
 
@@ -8,16 +9,32 @@ for j in range(n):
     A[:, j] = np.random.uniform(0, j, n)
 
 # uncomment to plot A
-# plt.title("A; A[i, j] ~ U[0, j]")
-# plt.imshow(A)
-# plt.show()
+plt.title("A; A[i, j] ~ U[0, j]")
+plt.imshow(A)
+plt.savefig('pset3/figs/A.png')
+plt.show()
 
 B = np.random.rand(n, n)
 
 # uncomment to plot B
-# plt.title("B; B[i, j] ~ U[0, 1]")
-# plt.imshow(B)
-# plt.show()
+plt.title("B; B[i, j] ~ U[0, 1]")
+plt.imshow(B)
+plt.savefig('pset3/figs/B.png')
+plt.show()
+
+# compute norms of columns of A
+A_norm = np.linalg.norm(A, axis = 0)
+# compute norms of columns of B
+B_norm = np.linalg.norm(B, axis = 1)
+# compute unnormalized p
+p = A_norm * B_norm
+# normalize p
+p /= p.sum()
+
+plt.title('index sampling distribution p')
+plt.plot(p)
+plt.savefig('pset3/figs/p_dist.png')
+plt.show()
 
 def randomized_matrix_multiplication(A, B, c):
     '''
@@ -50,7 +67,7 @@ def randomized_matrix_multiplication(A, B, c):
 
     # check distribution is valid
     assert (p >= 0).all(), f'distribution must be positive, instead got negative values at {np.nonzero(p < 0)}'
-    assert (abs(1-p.sum()) < 10 ** 6), f'distribution must add up to 1, instead it adds up to {p.sum()}'
+    assert (abs(1-p.sum()) < 10 ** -6), f'distribution must add up to 1, instead it adds up to {p.sum()}'
 
     # initialize result matrix
     result = np.zeros((n, n))
@@ -64,19 +81,52 @@ def randomized_matrix_multiplication(A, B, c):
         a = A[:, j:j+1]
         b = B[j:j+1, :]
 
+        # add scaled outer product of A column and B row to result
         result += (a @ b)/(p[j]*c)
 
     return result
 
+times = []
+errs = []
+
+start_time = time.time()
 target = A@B
+target_time = time.time()-start_time
+
 target_norm = np.linalg.norm(target)
+
+print(20*'_')
+print(f'full multiplication execution time: {target_time} sec')
+print(20*'_')
 
 c_vals = [20, 100, 500]
 
 for c in c_vals:
+    start_time = time.time()
     output = randomized_matrix_multiplication(A, B, c)
+    exec_time = time.time()-start_time
 
     rel_err = np.linalg.norm(output-target)/target_norm
+
+    times.append(exec_time)
+    errs.append(rel_err)
+
     print(20*'_')
-    print(f'c: {c}\nrelative error: {rel_err}')
+    print(f'c: {c}\nrelative error: {rel_err}\nexecution time: {exec_time} sec')
     print(20*'_')
+
+plt.title('execution time vs. c')
+plt.xlabel('c')
+plt.ylabel('execution time (sec)')
+plt.plot(c_vals, times, label = 'rand. multi time')
+#plt.hlines(target_time, 0, max(c_vals)*1.1, 'r--', label='original time')
+#plt.legend()
+plt.savefig('pset3/figs/time_vs_c.png')
+plt.show()
+
+plt.title('relative error vs. c')
+plt.xlabel('c')
+plt.ylabel('relative error')
+plt.plot(c_vals, errs)
+plt.savefig('pset3/figs/err_vs_c.png')
+plt.show()
