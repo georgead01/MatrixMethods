@@ -95,10 +95,6 @@ target_time = time.time()-start_time
 
 target_norm = np.linalg.norm(target)
 
-print(20*'_')
-print(f'full multiplication execution time: {target_time} sec')
-print(20*'_')
-
 c_vals = [20, 100, 500]
 
 for c in c_vals:
@@ -118,9 +114,7 @@ for c in c_vals:
 plt.title('execution time vs. c')
 plt.xlabel('c')
 plt.ylabel('execution time (sec)')
-plt.plot(c_vals, times, label = 'rand. multi time')
-#plt.hlines(target_time, 0, max(c_vals)*1.1, 'r--', label='original time')
-#plt.legend()
+plt.plot(c_vals, times)
 plt.savefig('pset3/figs/time_vs_c.png')
 plt.show()
 
